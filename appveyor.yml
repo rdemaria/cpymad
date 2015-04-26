@@ -6,6 +6,10 @@ environment:
     # See: http://stackoverflow.com/a/13751649/163740
     WITH_COMPILER: "cmd /E:ON /V:ON /C .\\appveyor\\run_with_compiler.cmd"
 
+    # Cache dependencies
+    PIP_FIND_LINKS: file://C:\pip-cache
+    PIP_WHEEL_DIR:  C:\pip-cache
+
   matrix:
     - PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7"
@@ -34,12 +38,30 @@ environment:
       PYTHON_ARCH: "64"
       WINDOWS_SDK_VERSION: "v7.1"
 
+init:
+  # Create cache directories if not existing
+  - "mkdir %PIP_WHEEL_DIR%"
+
 install:
+  # Log initial environment variables and cache contents
+  - "set"
+  - powershell: "ls %PIP_WHEEL_DIR%"
+
   # Add python and installed scripts to PATH
   - "set PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
 
   # install 'wheel' package which is needed for the following step
   - "pip install wheel"
+
+  # rebuild dependency cache (if not existing) and then install
+  # dependencies from cache:
+  - "%WITH_COMPILER% pip wheel -r appveyor\\requirements.txt"
+  - "pip install --no-index -r appveyor\\requirements.txt"
+
+  # Log final environment variables and cache contents
+  - "set"
+  - powershell: "ls %PIP_WHEEL_DIR%"
+
 build: off
 
 test_script:
@@ -48,3 +70,6 @@ test_script:
 
 artifacts:
   - path: dist\*
+
+cache:
+  - C:\pip-cache        -> appveyor\requirements.txt

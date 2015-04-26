@@ -1,0 +1,6 @@
+cython
+pyyaml
+numpy
+setuptools
+
+coverage
