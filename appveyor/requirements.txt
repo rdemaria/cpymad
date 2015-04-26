@@ -4,3 +4,4 @@ numpy
 setuptools
 
 coverage
+coveralls

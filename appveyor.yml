@@ -10,6 +10,7 @@ environment:
     PIP_FIND_LINKS: file://C:\pip-cache
     PIP_WHEEL_DIR:  C:\pip-cache
 
+    MADX_DIR:       C:\madx
     MINGW_HOME:     C:\mingw-static
 
   matrix:
@@ -40,16 +41,12 @@ environment:
       PYTHON_ARCH: "64"
       WINDOWS_SDK_VERSION: "v7.1"
 
-init:
-  # Create cache directories if not existing
-  - "mkdir %PIP_WHEEL_DIR%"
-  - "mkdir %MINGW_HOME%"
-
 install:
   # Log initial environment variables and cache contents
   - "set"
-  - powershell: "ls %PIP_WHEEL_DIR%"
-  - powershell: "ls %MINGW_HOME%"
+  - ps: "if (Test-Path $env:PIP_WHEEL_DIR) { ls $env:PIP_WHEEL_DIR }"
+  - ps: "if (Test-Path $env:MADX_DIR)      { ls $env:MADX_DIR }"
+  - ps: "if (Test-Path $env:MINGW_HOME)    { ls $env:MINGW_HOME }"
 
   # Add python and installed scripts to PATH
   - "set PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
@@ -70,20 +67,47 @@ install:
   - "C:\\Python34-x64\\python appveyor\\pywinbuilder.py"
   - "set PATH=%MINGW_HOME%\\bin;%PATH%"
 
+  # Remove 'sh.exe' from PATH (required for 'MinGW Makefiles' to work)
+  - "set PATH=%PATH:C:\\Program Files (x86)\\Git\\bin;=%"
+
+  # build MAD-X
+  - "call appveyor\\build_madx.bat %MADX_DIR% linklibs.rsp"
+
+  # build and install cpymad
+  - "python setup.py build_ext -c mingw32 -lquadmath --madxdir=%MADX_DIR%"
+  - "python setup.py bdist_wheel"
+  # wildcard expansion is a pain in CMD.exe and just a little less in
+  # powershell:
+  - ps: "pip install (ls dist\\* | % {\"$_\"})"
+
+  # prevent python from accidentally importing the cpymad package from the
+  # local check-out - we want the installed package, as only it contains the
+  # libmadx.pyd binary:
+  - "rd /s /q cpymad"
+
   # Log final environment variables and cache contents
   - "set"
-  - powershell: "ls %PIP_WHEEL_DIR%"
-  - powershell: "ls %MINGW_HOME%"
+  - ps: "ls $env:PIP_WHEEL_DIR"
+  - ps: "ls $env:MADX_DIR"
+  - ps: "ls $env:MINGW_HOME"
 
 build: off
 
 test_script:
-  - python --version
-  - pip freeze
+  - coverage run --source=cpymad    test/test_resource.py -v
+  - coverage run --source=cpymad -a test/test_rpc.py      -v
+  - coverage run --source=cpymad -a test/test_util.py     -v
+  - coverage run --source=cpymad -a test/test_madx.py     -v
+  - coverage run --source=cpymad -a test/test_locator.py  -v
+  - coverage run --source=cpymad -a test/test_model.py    -v
+
+after_test:
+ - coveralls
 
 artifacts:
   - path: dist\*
 
 cache:
-  - C:\pip-cache        -> appveyor\requirements.txt
+  - C:\pip-cache
+  - C:\madx             -> appveyor\build_madx.bat
   - C:\mingw-static
