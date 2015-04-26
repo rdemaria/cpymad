@@ -10,6 +10,8 @@ environment:
     PIP_FIND_LINKS: file://C:\pip-cache
     PIP_WHEEL_DIR:  C:\pip-cache
 
+    MINGW_HOME:     C:\mingw-static
+
   matrix:
     - PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7"
@@ -41,11 +43,13 @@ environment:
 init:
   # Create cache directories if not existing
   - "mkdir %PIP_WHEEL_DIR%"
+  - "mkdir %MINGW_HOME%"
 
 install:
   # Log initial environment variables and cache contents
   - "set"
   - powershell: "ls %PIP_WHEEL_DIR%"
+  - powershell: "ls %MINGW_HOME%"
 
   # Add python and installed scripts to PATH
   - "set PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
@@ -58,9 +62,18 @@ install:
   - "%WITH_COMPILER% pip wheel -r appveyor\\requirements.txt"
   - "pip install --no-index -r appveyor\\requirements.txt"
 
+  # Install the build environment with a script that uses the environment
+  # variables: we use a Python 3.4 to run the script as it needs to uncompress
+  # .tar.xv archives which is not supported in Python 2.
+  - "set PYTHON_HOME=%PYTHON%"
+  - "set ARCH=%PYTHON_ARCH%"
+  - "C:\\Python34-x64\\python appveyor\\pywinbuilder.py"
+  - "set PATH=%MINGW_HOME%\\bin;%PATH%"
+
   # Log final environment variables and cache contents
   - "set"
   - powershell: "ls %PIP_WHEEL_DIR%"
+  - powershell: "ls %MINGW_HOME%"
 
 build: off
 
@@ -73,3 +86,4 @@ artifacts:
 
 cache:
   - C:\pip-cache        -> appveyor\requirements.txt
+  - C:\mingw-static
