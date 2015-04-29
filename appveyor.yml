@@ -47,7 +47,6 @@ install:
   # Log initial environment variables and cache contents
   - "set"
   - ps: "if (Test-Path $env:PIP_WHEEL_DIR) { ls $env:PIP_WHEEL_DIR }"
-  - ps: "if (Test-Path $env:MADX_DIR)      { ls $env:MADX_DIR }"
   - ps: "if (Test-Path $env:MINGW_HOME)    { ls $env:MINGW_HOME }"
 
   # Add python and installed scripts to PATH
@@ -72,11 +71,8 @@ install:
   - "C:\\Python34-x64\\python appveyor\\pywinbuilder.py"
   - "set PATH=%MINGW_HOME%\\bin;%PATH%"
 
-  # Remove 'sh.exe' from PATH (required for 'MinGW Makefiles' to work)
-  - "set PATH=%PATH:C:\\Program Files (x86)\\Git\\bin;=%"
-
   # build MAD-X
-  - "call appveyor\\build_madx.bat %MADX_DIR% linklibs.rsp"
+  - "call appveyor\\get_madx.bat %MADX_DIR%"
 
   # build and install cpymad
   - "python setup.py build_ext -c mingw32 -lquadmath --madxdir=%MADX_DIR%"
@@ -93,7 +89,6 @@ install:
   # Log final environment variables and cache contents
   - "set"
   - ps: "ls $env:PIP_WHEEL_DIR"
-  - ps: "ls $env:MADX_DIR"
   - ps: "ls $env:MINGW_HOME"
 
 build: off
@@ -114,5 +109,4 @@ artifacts:
 
 cache:
   - C:\pip-cache
-  - C:\madx             -> appveyor\build_madx.bat
   - C:\mingw-static
