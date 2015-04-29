@@ -121,23 +121,29 @@ trivial. See also: `A Note About Git Commit Messages`_.
 Tests
 ~~~~~
 
-Currently, tests run on:
+When a commit is pushed upstream, the tests are automatically run on the
+following continuous integration (CI) systems:
 
-- The `Travis CI`_ service is mainly used to check that the unit tests for
-  pymad itself execute on several python versions. Python{2.7,3.3} are
-  supported. The tests are executed on any update of an upstream branch.
-  The Travis builds use a unofficial precompiled libmadx-dev_ package to
-  avoid having to rebuild the entire MAD-X library on each invocation.
+- `AppVeyor`_ runs the tests in windows environments for python{2.7,3.4}.
+  |AppVeyor|
 
-  |Build| |Coverage|
-
-.. _`Travis CI`: https://travis-ci.org/hibtc/cpymad
-.. _libmadx-dev: https://github.com/hibtc/madx-debian
+- `Travis CI`_ runs the tests in a linux container for python{2.7,3.4}.
+  For performance reasons the tests make use of a precompiled version of
+  the MAD-X library which is hosted in an *unofficial* launchpad PPA_.
+  |Travis| |Coverage|
 
 
-.. |Build| image:: https://api.travis-ci.org/hibtc/cpymad.svg?branch=master
+.. _AppVeyor: https://ci.appveyor.com/project/coldfix/cpymad
+.. _Travis CI: https://travis-ci.org/hibtc/cpymad
+.. _PPA: https://launchpad.net/~coldfix/+archive/ubuntu/madx/
+
+.. |AppVeyor| image:: https://ci.appveyor.com/api/projects/status/github/hibtc/cpymad?branch=master&svg=true
+   :target: https://ci.appveyor.com/project/coldfix/cpymad
+   :alt: Windows built status
+
+.. |Travis| image:: https://api.travis-ci.org/hibtc/cpymad.svg?branch=master
    :target: https://travis-ci.org/hibtc/cpymad
-   :alt: Build Status
+   :alt: Linux build status
 
 .. |Coverage| image:: https://coveralls.io/repos/hibtc/cpymad/badge.svg?branch=master
    :target: https://coveralls.io/r/hibtc/cpymad
