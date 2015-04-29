@@ -1,7 +1,0 @@
-cython
-pyyaml
-numpy
-setuptools
-
-coverage
-coveralls

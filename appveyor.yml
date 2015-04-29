@@ -7,7 +7,9 @@ environment:
     WITH_COMPILER: "cmd /E:ON /V:ON /C .\\appveyor\\run_with_compiler.cmd"
 
     # Cache dependencies
-    PIP_FIND_LINKS: file://C:\pip-cache
+    # pypi.coldfix.de/simple serves prebuilt .whl archives that were
+    # downloaded from: http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyyaml
+    PIP_FIND_LINKS: "file://C:\\pip-cache http://pypi.coldfix.de/simple"
     PIP_WHEEL_DIR:  C:\pip-cache
 
     MADX_DIR:       C:\madx
@@ -56,8 +58,11 @@ install:
 
   # rebuild dependency cache (if not existing) and then install
   # dependencies from cache:
-  - "%WITH_COMPILER% pip wheel -r appveyor\\requirements.txt"
-  - "pip install --no-index -r appveyor\\requirements.txt"
+  # The numpy .whl seems to be recognized as a pre-release, which is why --pre
+  # is needed to make pip use the file anyways:
+  - "pip wheel --no-index --pre cython numpy pyyaml"
+  - "pip wheel setuptools coverage coveralls"
+  - "pip install --no-index --pre cython numpy pyyaml setuptools coverage coveralls"
 
   # Install the build environment with a script that uses the environment
   # variables: we use a Python 3.4 to run the script as it needs to uncompress
