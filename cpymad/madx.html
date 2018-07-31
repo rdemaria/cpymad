@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cpymad.madx &mdash; cpymad 1.0.0rc0 documentation</title>
+  <title>cpymad.madx &mdash; cpymad 1.0.4.post1 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.0.0rc0
+                1.0.4.post1
               </div>
             
           
@@ -177,22 +177,33 @@ commands to the interpreter.</p>
 <p>The state of the MAD-X interpreter is accessed by directly reading the
 values from the C variables in-memory and sending the results pickled back
 over the pipe.</p>
-<dl class="attribute">
-<dt id="cpymad.madx.Madx.base_types">
-<code class="descname">base_types</code><a class="headerlink" href="#cpymad.madx.Madx.base_types" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mapping of MAD-X base elements.</p>
-</dd></dl>
-
+<p>Data attributes:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>command</strong> – Mapping of all MAD-X commands.</li>
+<li><strong>globals</strong> – Mapping of global MAD-X variables.</li>
+<li><a class="reference internal" href="#cpymad.madx.Sequence.elements" title="cpymad.madx.Sequence.elements"><strong>elements</strong></a> – Mapping of globally visible elements.</li>
+<li><strong>base_types</strong> – Mapping of MAD-X base elements.</li>
+<li><strong>sequence</strong> – Mapping of all sequences in memory.</li>
+<li><strong>table</strong> – Mapping of all tables in memory.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="cpymad.madx.Madx.call">
-<code class="descname">call</code><span class="sig-paren">(</span><em>filename</em>, <em>chdir=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cpymad/madx.html#Madx.call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cpymad.madx.Madx.call" title="Permalink to this definition">¶</a></dt>
+<code class="descname">call</code><span class="sig-paren">(</span><em>file</em>, <em>chdir=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cpymad/madx.html#Madx.call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cpymad.madx.Madx.call" title="Permalink to this definition">¶</a></dt>
 <dd><p>CALL a file in the MAD-X interpreter.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>filename</strong> (<em>str</em>) – file name with path</li>
+<li><strong>file</strong> (<em>str</em>) – file name with path</li>
 <li><strong>chdir</strong> (<em>bool</em>) – temporarily change directory in MAD-X process</li>
 </ul>
 </td>
@@ -229,18 +240,6 @@ of the MAD-X interpreter state that doesn’t go through the
 the directory).</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="cpymad.madx.Madx.command">
-<code class="descname">command</code><a class="headerlink" href="#cpymad.madx.Madx.command" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mapping of all MAD-X commands.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="cpymad.madx.Madx.elements">
-<code class="descname">elements</code><a class="headerlink" href="#cpymad.madx.Madx.elements" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mapping of globally visible elements.</p>
-</dd></dl>
-
 <dl class="method">
 <dt id="cpymad.madx.Madx.eval">
 <code class="descname">eval</code><span class="sig-paren">(</span><em>expr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cpymad/madx.html#Madx.eval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cpymad.madx.Madx.eval" title="Permalink to this definition">¶</a></dt>
@@ -266,12 +265,6 @@ the directory).</p>
 include element attribute nor function names.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="cpymad.madx.Madx.globals">
-<code class="descname">globals</code><a class="headerlink" href="#cpymad.madx.Madx.globals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mapping of global MAD-X variables.</p>
-</dd></dl>
-
 <dl class="method">
 <dt id="cpymad.madx.Madx.input">
 <code class="descname">input</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cpymad/madx.html#Madx.input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cpymad.madx.Madx.input" title="Permalink to this definition">¶</a></dt>
@@ -288,7 +281,7 @@ include element attribute nor function names.</p>
 
 <dl class="method">
 <dt id="cpymad.madx.Madx.match">
-<code class="descname">match</code><span class="sig-paren">(</span><em>constraints=[]</em>, <em>vary=[]</em>, <em>weight=None</em>, <em>method=('lmdif'</em>, <em>{})</em>, <em>knobfile=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cpymad/madx.html#Madx.match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cpymad.madx.Madx.match" title="Permalink to this definition">¶</a></dt>
+<code class="descname">match</code><span class="sig-paren">(</span><em>constraints=[]</em>, <em>vary=[]</em>, <em>weight=None</em>, <em>method=('lmdif'</em>, <em>{})</em>, <em>knobfile=None</em>, <em>limits=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cpymad/madx.html#Madx.match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cpymad.madx.Madx.match" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a simple MATCH operation.</p>
 <p>For more advanced cases, you should issue the commands manually.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -334,6 +327,12 @@ include element attribute nor function names.</p>
 </div>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="cpymad.madx.Madx.options">
+<code class="descname">options</code><a class="headerlink" href="#cpymad.madx.Madx.options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Values of current options.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="cpymad.madx.Madx.sectormap">
 <code class="descname">sectormap</code><span class="sig-paren">(</span><em>elems</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cpymad/madx.html#Madx.sectormap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cpymad.madx.Madx.sectormap" title="Permalink to this definition">¶</a></dt>
@@ -347,10 +346,10 @@ for the given elements and return as Nx7x7 array.</p>
 <dd><p>Read sectormap + kicks from memory and return as Nx7x7 array.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="cpymad.madx.Madx.sequence">
-<code class="descname">sequence</code><a class="headerlink" href="#cpymad.madx.Madx.sequence" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mapping of all sequences in memory.</p>
+<dl class="method">
+<dt id="cpymad.madx.Madx.sectortable2">
+<code class="descname">sectortable2</code><span class="sig-paren">(</span><em>name='sectortable'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cpymad/madx.html#Madx.sectortable2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cpymad.madx.Madx.sectortable2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read 2nd order sectormap T_ijk, return as Nx6x6x6 array.</p>
 </dd></dl>
 
 <dl class="method">
@@ -369,12 +368,6 @@ for the given elements and return as Nx7x7 array.</p>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="cpymad.madx.Madx.table">
-<code class="descname">table</code><a class="headerlink" href="#cpymad.madx.Madx.table" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mapping of all tables in memory.</p>
 </dd></dl>
 
 <dl class="method">
@@ -398,7 +391,7 @@ for the given elements and return as Nx7x7 array.</p>
 
 <dl class="method">
 <dt id="cpymad.madx.Madx.use">
-<code class="descname">use</code><span class="sig-paren">(</span><em>sequence</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cpymad/madx.html#Madx.use"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cpymad.madx.Madx.use" title="Permalink to this definition">¶</a></dt>
+<code class="descname">use</code><span class="sig-paren">(</span><em>sequence=None</em>, <em>range=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cpymad/madx.html#Madx.use"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cpymad.madx.Madx.use" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run USE to expand a sequence.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -644,7 +637,7 @@ for the given elements and return as Nx7x7 array.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'1.0.0rc0',
+            VERSION:'1.0.4.post1',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Unix &mdash; cpymad 1.0.0rc0 documentation</title>
+  <title>Unix &mdash; cpymad 1.0.4.post1 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.0.0rc0
+                1.0.4.post1
               </div>
             
           
@@ -87,9 +87,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Installation Instructions</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Unix</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#install-dependencies">Install dependencies</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#install-libmadx">Install libmadx</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#install-cpymad">Install cpymad</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-cpymad-manually">Building cpymad manually</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="windows.html">Windows</a></li>
@@ -166,65 +166,159 @@
             
   <div class="section" id="unix">
 <h1>Unix<a class="headerlink" href="#unix" title="Permalink to this headline">¶</a></h1>
-<p>On Unix-like system building cpymad from source is most convenient and
-should be unproblematic.</p>
-<div class="section" id="install-dependencies">
-<span id="dependencies"></span><h2>Install dependencies<a class="headerlink" href="#install-dependencies" title="Permalink to this headline">¶</a></h2>
-<p>On many linux distributions most or all of the following dependencies will
-be available in the official repositories. Use these as the preferred
-install method.</p>
-<p>To build MAD-X and cpymad from source you will need</p>
+<p>Before trying to install cpymad, make sure that you have recent versions of</p>
 <ul class="simple">
-<li><a class="reference external" href="http://www.cmake.org/">CMake</a></li>
-<li>Python&gt;=2.7</li>
-<li>C / Fortran compilers (gcc &gt;= 4.8)</li>
+<li><a class="reference external" href="http://www.cmake.org/">cmake</a> &gt;= 3.0</li>
+<li>gcc &gt;= 4.8, along with g++ and gfortran (other C/C++/fortran compiler suites
+may work too but are untested as of now)</li>
 </ul>
-<p>Furthermore, cpymad depends on the following python packages:</p>
+<p>On the python side, you need:</p>
 <ul class="simple">
-<li><a class="reference external" href="https://pypi.python.org/pypi/setuptools">setuptools</a></li>
-<li><a class="reference external" href="http://cython.org/">Cython</a></li>
-<li><a class="reference external" href="http://www.numpy.org/">NumPy</a></li>
-<li><a class="reference external" href="https://pypi.python.org/pypi/PyYAML">PyYAML</a></li>
-<li><a class="reference external" href="https://pypi.python.org/pypi/minrpc">minrpc</a></li>
+<li>python &gt;= 2.7, but higher versions (&gt;=3.7) are preferred</li>
+<li><a class="reference external" href="https://pypi.org/project/setuptools">setuptools</a> python package</li>
 </ul>
-<p>The python packages can be installed using <a class="reference external" href="https://pypi.python.org/pypi/pip">pip</a>.</p>
-</div>
-<div class="section" id="install-libmadx">
-<h2>Install libmadx<a class="headerlink" href="#install-libmadx" title="Permalink to this headline">¶</a></h2>
-<p>Download the <a class="reference external" href="https://github.com/MethodicalAcceleratorDesign/MAD-X/releases">latest MAD-X release</a> from github or use directly the source
-code from master (unstable):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/MethodicalAcceleratorDesign/MAD-X
-</pre></div>
-</div>
-<p>Build and install the library</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
-cmake ../madX <span class="se">\</span>
-    -DMADX_STATIC<span class="o">=</span>OFF <span class="se">\</span>
-    -DBUILD_SHARED_LIBS<span class="o">=</span>ON <span class="se">\</span>
-    -DUSE_GC<span class="o">=</span>ON <span class="se">\</span>
-    -DCMAKE_INSTALL_RPATH<span class="o">=</span><span class="s1">&#39;$ORIGIN&#39;</span>
-make <span class="o">&amp;&amp;</span> make install
-</pre></div>
-</div>
-<p>The install step might require root privileges if not changing the
-installation prefix.</p>
-</div>
-<div class="section" id="install-cpymad">
-<h2>Install cpymad<a class="headerlink" href="#install-cpymad" title="Permalink to this headline">¶</a></h2>
-<p>The latest <a class="reference external" href="https://pypi.python.org/pypi/cpymad#downloads">cpymad release</a> can conveniently be installed using <a class="reference external" href="https://pypi.python.org/pypi/pip">pip</a>:</p>
+<p>You can now build and install cpymad using the command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install cpymad
 </pre></div>
 </div>
-<p>If you run into problems with this, you should manually download and
-install the <a class="reference external" href="https://github.com/hibtc/cpymad">cpymad</a> <a class="reference external" href="https://github.com/hibtc/cpymad/zipball/master">source</a> to see in which step the problem occurs:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/hibtc/cpymad
-<span class="nb">cd</span> cpymad
-python setup.py build
-python setup.py install
+<p>Since cpymad is linked against a special library version of MAD-X, and
+therefore must usually compile MAD-X from source before it can be built (even
+if you have the MAD-X executable installed). This means that the cpymad setup
+can take between 5 and 30 minutes, depending on your internet bandwidth and
+machine performance.</p>
+<p>If the setup fails, you should build MAD-X and cpymad manually, as described
+below.</p>
+<div class="section" id="install-libmadx">
+<h2>Install libmadx<a class="headerlink" href="#install-libmadx" title="Permalink to this headline">¶</a></h2>
+<p>cpymad requires a library build of MAD-X. The official executable is not
+sufficient. In order to build MAD-X from source you will need the following
+programs:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://www.cmake.org/">CMake</a> &gt;= 3.0</li>
+<li>gcc &gt;= 4.8, along with gfortran (other C/C++/fortran compiler suites may
+work too but are untested as of now)</li>
+</ul>
+<p>Download the <a class="reference external" href="http://madx.web.cern.ch/madx/releases/last-rel">latest MAD-X release</a> <a class="reference external" href="https://github.com/MethodicalAcceleratorDesign/MAD-X/releases">from github</a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget https://github.com/MethodicalAcceleratorDesign/MAD-X/archive/5.04.01.tar.gz
+tar -xzf MAD-X-5.04.01.tar.gz
 </pre></div>
 </div>
-<p>You might need root privileges for the last step if not installing to a
-<a class="reference external" href="http://virtualenv.readthedocs.org/en/latest/virtualenv.html">virtualenv</a>.</p>
+<p>or use directly the source code from master (unstable):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/MethodicalAcceleratorDesign/MAD-X
+</pre></div>
+</div>
+<p>We will do an out-of-source build in a <code class="docutils literal notranslate"><span class="pre">build/</span></code> subdirectory. This way, you
+can easily delete the <code class="docutils literal notranslate"><span class="pre">build</span></code> directory and restart if anything goes wrong.
+The basic process looks as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> MAD-X
+mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
+cmake .. <span class="se">\</span>
+    -DMADX_ONLINE<span class="o">=</span>OFF <span class="se">\</span>
+    -DMADX_INSTALL_DOC<span class="o">=</span>OFF <span class="se">\</span>
+    -CMAKE_INSTALL_PREFIX<span class="o">=</span>../install
+make <span class="o">&amp;&amp;</span> make install
+</pre></div>
+</div>
+<p>Here, we have turned off the online model, documentation files and, more
+importantly, have used a custom installation prefix to prevent cmake from
+installing MAD-X to a system directory (which would require root privileges,
+and may be harder to remove completely). If you prefer a more permanent
+install location (<code class="docutils literal notranslate"><span class="pre">-DCMAKE_INSTALL_PREFIX=XXX</span></code>), the most common ones are
+as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">~/.</span><span class="n">local</span>                <span class="n">user</span><span class="o">-</span><span class="n">level</span> <span class="n">installation</span><span class="p">,</span> <span class="n">no</span> <span class="n">sudo</span> <span class="n">required</span>
+<span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">madx</span>               <span class="n">system</span><span class="o">-</span><span class="n">wide</span> <span class="n">but</span> <span class="n">easily</span> <span class="n">removable</span> <span class="n">installation</span>
+<span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">madx</span><span class="o">/&lt;</span><span class="n">VERSION</span><span class="o">&gt;</span>     <span class="k">if</span> <span class="n">you</span> <span class="n">plan</span> <span class="n">to</span> <span class="n">install</span> <span class="n">several</span> <span class="n">versions</span> <span class="n">side</span><span class="o">-</span><span class="n">by</span><span class="o">-</span><span class="n">side</span>
+<span class="o">/</span><span class="n">usr</span>                    <span class="n">system</span><span class="p">,</span> <span class="n">usually</span> <span class="n">default</span><span class="p">,</span> <span class="n">mixes</span> <span class="k">with</span> <span class="n">your</span> <span class="n">system</span> <span class="n">files</span>
+<span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span>              <span class="n">system</span><span class="p">,</span> <span class="n">local</span> <span class="n">machine</span> <span class="p">(</span><span class="ow">not</span> <span class="n">always</span> <span class="n">used</span><span class="p">),</span> <span class="n">mixes</span> <span class="n">like</span> <span class="o">/</span><span class="n">usr</span>
+</pre></div>
+</div>
+<p>Although the cmake command has many more options I will mention only the
+following:</p>
+<p>You can pass <code class="docutils literal notranslate"><span class="pre">-DMADX_STATIC=ON</span></code> to specify that the link dependencies of
+MAD-X itself (libc, libgfortran, libstdc++, blas, lapack, etc) should be
+linked statically when building cpymad later. This may be attempted in case of
+problems and is not guaranteed to work on all platforms (if your OS e.g.  does
+not distribute <code class="docutils literal notranslate"><span class="pre">libgfortran.a</span></code> as is the case on archlinux). Note that even
+if you do not set this flag, cpymad will still be linked statically against
+MAD-X, just not against the c/c++/fortran/etc runtimes.</p>
+<p>You can pass <code class="docutils literal notranslate"><span class="pre">-DBUILD_SHARED_LIBS=ON</span></code> if you want to link cpymad dynamically
+against MAD-X. In theory, this allows using, testing and even updating the
+MAD-X shared object independently of cpymad, but probably does more harm than
+good in practice. If using this option, you have to make sure to <strong>install
+MAD-X to a permanent location</strong> where it can be found at runtime. Usually this
+means installing to the (default) system directories, but it can also be done
+by setting the <a class="reference external" href="http://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html">LD_LIBRARY_PATH</a> environment variable or passing appropriate
+<code class="docutils literal notranslate"><span class="pre">--rpath</span></code> to the setup script.</p>
+</div>
+<div class="section" id="install-cpymad">
+<h2>Install cpymad<a class="headerlink" href="#install-cpymad" title="Permalink to this headline">¶</a></h2>
+<p>After having built MAD-X we can now build cpymad. You will need:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://cython.org/">Cython</a>, if you plan to work with the git checkout. Cython can be installed
+using <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">cython</span></code> (this is unnecessary for the release tarball
+from PyPI)</li>
+</ul>
+<p>Concerning runtime dependencies on other python packages, cpymad requires only
+<a class="reference external" href="http://www.numpy.org/">numpy</a> and <a class="reference external" href="https://pypi.org/project/minrpc">minrpc</a>, both of which should usually be resolved automatically by
+<a class="reference external" href="https://pypi.org/project/pip">pip</a> or the setup script. If you plan to install in an offline environment,
+you can download all dependencies using the command <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">download</span> <span class="pre">cpymad</span></code>.</p>
+<p>We will need to tell the cpymad setup script to use our MAD-X installation
+path from before. The easiest way to do this is by setting an environment
+variable:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">MADXDIR</span><span class="o">=</span>/PATH/TO/CMAKE_INSTALL_PREFIX
+</pre></div>
+</div>
+<p>If you did build MAD-X with <code class="docutils literal notranslate"><span class="pre">-DBUILD_SHARED_LIBS</span></code> or <code class="docutils literal notranslate"><span class="pre">-DMADX_STATIC</span></code>
+you should also set the corresponding option:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">BUILD_SHARED_LIBS</span><span class="o">=</span><span class="m">1</span>
+
+<span class="c1"># or:</span>
+
+<span class="nb">export</span> <span class="nv">MADX_STATIC</span><span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+<p>With these settings in place, you can try installing cpymad as before:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install cpymad
+</pre></div>
+</div>
+</div>
+<div class="section" id="building-cpymad-manually">
+<h2>Building cpymad manually<a class="headerlink" href="#building-cpymad-manually" title="Permalink to this headline">¶</a></h2>
+<p>If the installation fails or produces an unloadable version of cpymad, fetch
+<a class="reference external" href="https://pypi.org/project/cpymad#files">latest cpymad release</a> from PyPI (the idea is that this grants you more
+control over the build options and alter the setup script if necessary):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip download --no-deps cpymad
+tar -xzf cpymad-*.tar.gz
+</pre></div>
+</div>
+<p>Alternatively, fetch the very latest <a class="reference external" href="https://github.com/hibtc/cpymad">cpymad</a> <a class="reference external" href="https://github.com/hibtc/cpymad/zipball/master">source</a> from git:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/hibtc/cpymad
+</pre></div>
+</div>
+<p>After that, build cpymad and enter development mode so that changes in the
+local directory will take effect immediately (don’t forget to export the MAD-X
+path as above):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> cpymad
+python setup.py build_ext
+python setup.py develop
+</pre></div>
+</div>
+<p>The advantage with this method is that you can pass additional compiler or
+linker arguments to the <code class="docutils literal notranslate"><span class="pre">build_ext</span></code> command. For example, if you happened to
+build MAD-X with blas/lapack, you may need to pass additional linklibs:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python setup.py build_ext -lblas -llapack
+</pre></div>
+</div>
+<p>Once you get cpymad working you may wish to make your installation more
+permanent, by e.g. using the <code class="docutils literal notranslate"><span class="pre">install</span></code> command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python setup.py install
+</pre></div>
+</div>
+<p>Or even creating a wheel that can be installed using pip:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python setup.py bdist_wheel
+pip install dist/cpymad-*.whl
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -270,7 +364,7 @@ python setup.py install
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'1.0.0rc0',
+            VERSION:'1.0.4.post1',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

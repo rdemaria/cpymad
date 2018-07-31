@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Getting Started &mdash; cpymad 1.0.0rc0 documentation</title>
+  <title>Getting Started &mdash; cpymad 1.0.4.post1 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.0.0rc0
+                1.0.4.post1
               </div>
             
           
@@ -85,7 +85,6 @@
             
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#starting-mad-x">Starting MAD-X</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#basic-mad-x-commands">Basic MAD-X commands</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#controlling-mad-x">Controlling MAD-X</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#input">input()</a></li>
@@ -175,51 +174,63 @@
             
   <div class="section" id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<p>The preferred way of using cpymad is via the <a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx" title="cpymad.madx.Madx"><code class="xref py py-class docutils literal notranslate"><span class="pre">Madx</span></code></a> class.
-It is responsible for controlling and accessing a MAD-X process from python.</p>
-<div class="section" id="starting-mad-x">
-<h2>Starting MAD-X<a class="headerlink" href="#starting-mad-x" title="Permalink to this headline">¶</a></h2>
-<p>A new MAD-X process can be spawned as follows:</p>
+<p>The basic way to use cpymad is to create a <a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx" title="cpymad.madx.Madx"><code class="xref py py-class docutils literal notranslate"><span class="pre">Madx</span></code></a>
+instance that can be used to control and access the state of a MAD-X process:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cpymad.madx</span> <span class="kn">import</span> <span class="n">Madx</span>
 <span class="n">madx</span> <span class="o">=</span> <span class="n">Madx</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
+<p>This spawns a MAD-X process in the background and opens a communication
+channel that will be used to submit commands and fetch data using a simple RPC
+framework.</p>
+<p>Note that running MAD-X in a separate process and using it via the remote
+channel has several benefits over loading it directly into the python process
+space. For one this allows to use any number of MAD-X instances in parallel.
+More than that the MAD-X interpreter can be started and stopped independently
+of the lifetime of the parent process, and perhaps most importantly, the main
+process is shielded from potential crashes occuring within the MAD-X
+interpreter.</p>
 <div class="section" id="basic-mad-x-commands">
 <h2>Basic MAD-X commands<a class="headerlink" href="#basic-mad-x-commands" title="Permalink to this headline">¶</a></h2>
-<p>The class has special methods to execute a few basic MAD-X commands. In
-general, method names and signatures correspond closely to those of the
-corresponding MAD-X commands. For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">madx</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s1">&#39;/path/to/some/input_file.madx&#39;</span><span class="p">)</span>
+<p>Now that you started MAD-X, most MAD-X commands can be executed using the
+corresponding method on the <a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx" title="cpymad.madx.Madx"><code class="xref py py-class docutils literal notranslate"><span class="pre">Madx</span></code></a> instance (except in the
+case where the name of the command conflicts with another property, in this
+case, see the <a class="reference internal" href="#command">command()</a> property). For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">madx</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="n">echo</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="n">twiss</span> <span class="o">=</span> <span class="n">madx</span><span class="o">.</span><span class="n">twiss</span><span class="p">(</span>
+<span class="n">madx</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="nb">file</span><span class="o">=</span><span class="s1">&#39;/path/to/some/input_file.madx&#39;</span><span class="p">)</span>
+
+<span class="n">madx</span><span class="o">.</span><span class="n">twiss</span><span class="p">(</span>
     <span class="n">sequence</span><span class="o">=</span><span class="s1">&#39;LEBT&#39;</span><span class="p">,</span>
     <span class="n">betx</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">bety</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
     <span class="n">alfx</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">alfy</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Only some commands are exposed directly on the <code class="xref py py-class docutils literal notranslate"><span class="pre">Madx</span></code> object, generally
-this is done only to add some extra functionality around the MAD-X command.</p>
-<p>For example, <a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx.call" title="cpymad.madx.Madx.call"><code class="xref py py-meth docutils literal notranslate"><span class="pre">call()</span></code></a> allows to temporarily change the
-directory to the one of the executed file by setting the optional <code class="docutils literal notranslate"><span class="pre">chdir</span></code>
-parameter to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
-<p>The <a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx.twiss" title="cpymad.madx.Madx.twiss"><code class="xref py py-meth docutils literal notranslate"><span class="pre">twiss()</span></code></a> method is special because it returns the
-resulting twiss table as a <code class="docutils literal notranslate"><span class="pre">dict</span></code> like object, that can be used conveniently
-for your own analysis, e.g.:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">twiss</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">],</span> <span class="n">twiss</span><span class="p">[</span><span class="s1">&#39;betx&#39;</span><span class="p">])</span>
+<p>In general, parameters must be passed by their name, exactly as for the MAD-X
+command. Flags should be passed as python bools, deferred expressions (<code class="docutils literal notranslate"><span class="pre">:=</span></code>)
+as strings, and direct expressions (<code class="docutils literal notranslate"><span class="pre">=</span></code>) as floats using
+<a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx.eval" title="cpymad.madx.Madx.eval"><code class="xref py py-meth docutils literal notranslate"><span class="pre">eval()</span></code></a>.</p>
+<p>Most of the command methods are auto-generated by introspecting the
+corresponding MAD-X command object. Only a few of the methods provide
+additional functionality over the raw MAD-X commands:</p>
+<p><a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx.call" title="cpymad.madx.Madx.call"><code class="xref py py-meth docutils literal notranslate"><span class="pre">call()</span></code></a> allows to temporarily change the directory to
+the one of the executed file by setting the optional <code class="docutils literal notranslate"><span class="pre">chdir</span></code> parameter to
+<code class="docutils literal notranslate"><span class="pre">True</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># change directory to `/path/to/your/` during CALL:</span>
+<span class="n">madx</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s1">&#39;/path/to/your/file.madx&#39;</span><span class="p">,</span> <span class="n">chdir</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx.twiss" title="cpymad.madx.Madx.twiss"><code class="xref py py-meth docutils literal notranslate"><span class="pre">twiss()</span></code></a> returns the resulting twiss <a class="reference internal" href="#table">table</a>, which can
+be used conveniently for your own analysis, e.g.:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">twiss</span> <span class="o">=</span> <span class="n">madx</span><span class="o">.</span><span class="n">twiss</span><span class="p">(</span><span class="n">sequence</span><span class="o">=</span><span class="s1">&#39;LEBT&#39;</span><span class="p">,</span> <span class="n">betx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bety</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">twiss</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">twiss</span><span class="o">.</span><span class="n">betx</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>The other overloaded MAD-X commands are:</p>
-<ul class="simple">
-<li><a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx.survey" title="cpymad.madx.Madx.survey"><code class="xref py py-meth docutils literal notranslate"><span class="pre">survey()</span></code></a></li>
-<li><a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx.use" title="cpymad.madx.Madx.use"><code class="xref py py-meth docutils literal notranslate"><span class="pre">use()</span></code></a></li>
-<li><a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx.select" title="cpymad.madx.Madx.select"><code class="xref py py-meth docutils literal notranslate"><span class="pre">select()</span></code></a></li>
-<li><a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx.help" title="cpymad.madx.Madx.help"><code class="xref py py-meth docutils literal notranslate"><span class="pre">help()</span></code></a></li>
-</ul>
-<p>For all other commands, you have to use one of the mechanisms described in
-<a class="reference internal" href="#controlling-mad-x">Controlling MAD-X</a>.</p>
+<p><a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx.survey" title="cpymad.madx.Madx.survey"><code class="xref py py-meth docutils literal notranslate"><span class="pre">survey()</span></code></a> returns the resulting survey table, similar
+to <a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx.twiss" title="cpymad.madx.Madx.twiss"><code class="xref py py-meth docutils literal notranslate"><span class="pre">twiss()</span></code></a>.</p>
 </div>
 <div class="section" id="controlling-mad-x">
 <h2>Controlling MAD-X<a class="headerlink" href="#controlling-mad-x" title="Permalink to this headline">¶</a></h2>
@@ -235,19 +246,19 @@ example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">madx</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="s1">&#39;CALL, FILE=&quot;fodo.madx&quot;;&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Do NOT forget the trailing semicolon!</p>
+<p>Do not input anything but simple single line commands, no comments.</p>
 </div>
 <div class="section" id="command">
 <h3>command()<a class="headerlink" href="#command" title="Permalink to this headline">¶</a></h3>
 <p>While it can be necessary to use <a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx.input" title="cpymad.madx.Madx.input"><code class="xref py py-meth docutils literal notranslate"><span class="pre">input()</span></code></a> for some
 constructs like macros or loops, most of the time your most favorable option
-is to use the <a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx.command" title="cpymad.madx.Madx.command"><code class="xref py py-attr docutils literal notranslate"><span class="pre">command</span></code></a> attribute. It provides syntactic
+is to use the <code class="xref py py-attr docutils literal notranslate"><span class="pre">command</span></code> attribute. It provides syntactic
 sugar for composing regular MAD-X commands from python variables and feeding
 the generated command string to <a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx.input" title="cpymad.madx.Madx.input"><code class="xref py py-meth docutils literal notranslate"><span class="pre">input()</span></code></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">madx</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">beam</span><span class="p">(</span><span class="n">sequence</span><span class="o">=</span><span class="s1">&#39;fodo&#39;</span><span class="p">,</span> <span class="n">particle</span><span class="o">=</span><span class="s1">&#39;PROTON&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>If you need to override how <a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx.command" title="cpymad.madx.Madx.command"><code class="xref py py-attr docutils literal notranslate"><span class="pre">command</span></code></a> generates the
+<p>If you need to override how <code class="xref py py-attr docutils literal notranslate"><span class="pre">command</span></code> generates the
 command string (argument order/formatting), you can pass strings as positional
 arguments. For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">madx</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">beam</span><span class="p">(</span><span class="s1">&#39;sequence=fodo&#39;</span><span class="p">,</span> <span class="n">particle</span><span class="o">=</span><span class="s1">&#39;PROTON&#39;</span><span class="p">)</span>
@@ -282,8 +293,7 @@ change the directory).</p>
 <h3>Others<a class="headerlink" href="#others" title="Permalink to this headline">¶</a></h3>
 <p>At this point, you should be able to execute arbitrary MAD-X commands via
 cpymad.</p>
-<p>All other methods for controlling MAD-X (except for
-<a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx.chdir" title="cpymad.madx.Madx.chdir"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chdir()</span></code></a>) are just syntactic sugar for
+<p>All other methods for controlling MAD-X are just syntactic sugar for
 <a class="reference internal" href="cpymad/madx.html#cpymad.madx.Madx.input" title="cpymad.madx.Madx.input"><code class="xref py py-meth docutils literal notranslate"><span class="pre">input()</span></code></a>. Among others, this has the following main
 benefits:</p>
 <ul class="simple">
@@ -305,12 +315,11 @@ going through the same interface.</li>
 <p>In contrast to how cpymad is <em>controlling</em> the MAD-X state, when <em>accessing</em>
 state it does not use MAD-X commands, but rather directly retrieves the data
 from the C variables in the MAD-X process memory!</p>
-<p>This means that data retrieval is relatively fast because it does <strong>not</strong>
-require:</p>
+<p>This means that data retrieval is relatively fast because it does <strong>not</strong>:</p>
 <ul class="simple">
-<li>a command to be parsed by the MAD-X interpreter</li>
-<li>to use a file on disk or the network</li>
-<li>output data to be parsed on the python side</li>
+<li>parse command in the MAD-X interpreter</li>
+<li>use a file on disk or the network</li>
+<li>parse resulting data on python side</li>
 <li>to potentially modify the MAD-X interpreter state by executing a command</li>
 </ul>
 <p>Apart from this major advantage, another important implication is that the
@@ -411,8 +420,6 @@ file names, arbitrary callables and file-like objects as follows:</p>
 <span class="n">madx</span> <span class="o">=</span> <span class="n">Madx</span><span class="p">(</span><span class="n">command_log</span><span class="o">=</span><span class="n">CommandLog</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>Of course, in python2 the <code class="docutils literal notranslate"><span class="pre">print</span></code> example requires <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">__future__</span> <span class="pre">import</span>
-<span class="pre">print_function</span></code> to be in effect.</p>
 </div>
 <div class="section" id="redirecting-output">
 <h2>Redirecting output<a class="headerlink" href="#redirecting-output" title="Permalink to this headline">¶</a></h2>
@@ -478,7 +485,7 @@ the filesystem:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0rc0',
+            VERSION:'1.0.4.post1',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

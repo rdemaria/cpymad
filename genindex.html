@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; cpymad 1.0.0rc0 documentation</title>
+  <title>Index &mdash; cpymad 1.0.4.post1 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.0.0rc0
+                1.0.4.post1
               </div>
             
           
@@ -165,6 +165,7 @@
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
@@ -183,12 +184,10 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cpymad/madx.html#cpymad.madx.Madx.base_types">base_types (cpymad.madx.Madx attribute)</a>
+      <li><a href="cpymad/madx.html#cpymad.madx.BaseElementList">BaseElementList (class in cpymad.madx)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cpymad/madx.html#cpymad.madx.BaseElementList">BaseElementList (class in cpymad.madx)</a>
-</li>
       <li><a href="cpymad/madx.html#cpymad.madx.Sequence.beam">beam (cpymad.madx.Sequence attribute)</a>
 </li>
   </ul></td>
@@ -207,14 +206,12 @@
       </ul></li>
       <li><a href="cpymad/util.html#cpymad.util.check_expression">check_expression() (in module cpymad.util)</a>
 </li>
-      <li><a href="cpymad/madx.html#cpymad.madx.Madx.command">command (cpymad.madx.Madx attribute)</a>
-</li>
       <li><a href="cpymad/madx.html#cpymad.madx.CommandLog">CommandLog (class in cpymad.madx)</a>
+</li>
+      <li><a href="cpymad/types.html#cpymad.types.Constraint">Constraint (class in cpymad.types)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cpymad/types.html#cpymad.types.Constraint">Constraint (class in cpymad.types)</a>
-</li>
       <li><a href="cpymad/madx.html#cpymad.madx.Table.copy">copy() (cpymad.madx.Table method)</a>
 </li>
       <li><a href="cpymad/libmadx.html#module-cpymad.libmadx">cpymad.libmadx (module)</a>
@@ -233,12 +230,8 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cpymad/madx.html#cpymad.madx.Madx.elements">elements (cpymad.madx.Madx attribute)</a>
-
-      <ul>
-        <li><a href="cpymad/madx.html#cpymad.madx.Sequence.elements">(cpymad.madx.Sequence attribute)</a>
+      <li><a href="cpymad/madx.html#cpymad.madx.Sequence.elements">elements (cpymad.madx.Sequence attribute)</a>
 </li>
-      </ul></li>
       <li><a href="cpymad/madx.html#cpymad.madx.Madx.eval">eval() (cpymad.madx.Madx method)</a>
 
       <ul>
@@ -325,6 +318,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cpymad/libmadx.html#cpymad.libmadx.get_globals">get_globals() (in module cpymad.libmadx)</a>
 </li>
+      <li><a href="cpymad/libmadx.html#cpymad.libmadx.get_options">get_options() (in module cpymad.libmadx)</a>
+</li>
       <li><a href="cpymad/libmadx.html#cpymad.libmadx.get_sequence_beam">get_sequence_beam() (in module cpymad.libmadx)</a>
 </li>
       <li><a href="cpymad/libmadx.html#cpymad.libmadx.get_sequence_count">get_sequence_count() (in module cpymad.libmadx)</a>
@@ -364,8 +359,6 @@
       <li><a href="cpymad/libmadx.html#cpymad.libmadx.get_version_number">get_version_number() (in module cpymad.libmadx)</a>
 </li>
       <li><a href="cpymad/libmadx.html#cpymad.libmadx.getcwd">getcwd() (in module cpymad.libmadx)</a>
-</li>
-      <li><a href="cpymad/madx.html#cpymad.madx.Madx.globals">globals (cpymad.madx.Madx attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -448,6 +441,14 @@
   </ul></td>
 </tr></table>
 
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cpymad/madx.html#cpymad.madx.Madx.options">options (cpymad.madx.Madx attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -473,9 +474,9 @@
 </li>
       <li><a href="cpymad/madx.html#cpymad.madx.Madx.sectortable">sectortable() (cpymad.madx.Madx method)</a>
 </li>
-      <li><a href="cpymad/madx.html#cpymad.madx.Sequence">Sequence (class in cpymad.madx)</a>
+      <li><a href="cpymad/madx.html#cpymad.madx.Madx.sectortable2">sectortable2() (cpymad.madx.Madx method)</a>
 </li>
-      <li><a href="cpymad/madx.html#cpymad.madx.Madx.sequence">sequence (cpymad.madx.Madx attribute)</a>
+      <li><a href="cpymad/madx.html#cpymad.madx.Sequence">Sequence (class in cpymad.madx)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -496,8 +497,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cpymad/madx.html#cpymad.madx.Table">Table (class in cpymad.madx)</a>
-</li>
-      <li><a href="cpymad/madx.html#cpymad.madx.Madx.table">table (cpymad.madx.Madx attribute)</a>
 </li>
       <li><a href="cpymad/libmadx.html#cpymad.libmadx.table_exists">table_exists() (in module cpymad.libmadx)</a>
 </li>
@@ -574,7 +573,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0rc0',
+            VERSION:'1.0.4.post1',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
