@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Windows &mdash; cpymad 1.0.4.post1 documentation</title>
+  <title>Windows &mdash; cpymad 1.0.6 documentation</title>
   
 
   
@@ -24,8 +24,7 @@
 
   
 
-  
-    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -59,7 +58,7 @@
             
             
               <div class="version">
-                1.0.4.post1
+                1.0.6
               </div>
             
           
@@ -207,14 +206,14 @@ pip download -d packages cpymad
 </div>
 <div class="section" id="manual-build">
 <h2>Manual build<a class="headerlink" href="#manual-build" title="Permalink to this headline">¶</a></h2>
-<p>In order to build cpymad manually on python≤3.4, I recommend <a class="reference external" href="http://winpython.sourceforge.net/">WinPython</a>. This
+<p>In order to build cpymad manually on python≤3.4, I recommend <a class="reference external" href="http://winpython.github.io/">WinPython</a>. This
 portable python distribution includes a MinGW compiler suite that allows to
 create self-contained binaries which can later be used on other python
 distributions as well. Python≥3.5 is currently unsupported due to a change in
 python’s windows build process.</p>
 <div class="section" id="install-dependencies">
 <h3>Install dependencies<a class="headerlink" href="#install-dependencies" title="Permalink to this headline">¶</a></h3>
-<p>Except for <a class="reference external" href="http://winpython.sourceforge.net/">WinPython</a> itself, you just need <a class="reference external" href="http://www.cmake.org/">CMake</a> and <a class="reference external" href="https://pypi.python.org/pypi/minrpc">minrpc</a>.</p>
+<p>Except for <a class="reference external" href="http://winpython.github.io/">WinPython</a> itself, you just need <a class="reference external" href="http://www.cmake.org/">CMake</a> and <a class="reference external" href="https://pypi.python.org/pypi/minrpc">minrpc</a>.</p>
 <p>First install <a class="reference external" href="http://www.cmake.org/">CMake</a>. In the <em>Install options</em> dialog choose to <em>Add CMake
 to the system PATH for all/current user</em> according to your liking.
 Alternatively, manually extend your PATH later in the terminal:</p>
@@ -304,7 +303,7 @@ python distribution, like so:</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014-2017, T. Gläßle (HIT), 2011-2013 Y.I. Levinsen, K. Fuchsberger (CERN).
+        &copy; Copyright 2014-2017, T. Gläßle (HIT),2011-2013 Y.I. Levinsen, K. Fuchsberger (CERN).
 
     </p>
   </div>
@@ -326,7 +325,7 @@ python distribution, like so:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'1.0.4.post1',
+            VERSION:'1.0.6',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
@@ -337,19 +336,15 @@ python distribution, like so:</p>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
-  
-  
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {
-          
-          SphinxRtdTheme.Navigation.enableSticky();
-          
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script> 
 

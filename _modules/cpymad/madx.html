@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cpymad.madx &mdash; cpymad 1.0.4.post1 documentation</title>
+  <title>cpymad.madx &mdash; cpymad 1.0.6 documentation</title>
   
 
   
@@ -24,8 +24,7 @@
 
   
 
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -57,7 +56,7 @@
             
             
               <div class="version">
-                1.0.4.post1
+                1.0.6
               </div>
             
           
@@ -161,9 +160,13 @@
 <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">product</span>
 <span class="kn">from</span> <span class="nn">numbers</span> <span class="k">import</span> <span class="n">Number</span>
-<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">collections.abc</span> <span class="k">as</span> <span class="nn">abc</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>                 <span class="c1"># py2</span>
+    <span class="kn">import</span> <span class="nn">collections</span> <span class="k">as</span> <span class="nn">abc</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -171,6 +174,7 @@
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">_rpc</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">util</span>
+<span class="kn">from</span> <span class="nn">.stream</span> <span class="k">import</span> <span class="n">AsyncReader</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="n">basestring</span>
@@ -210,6 +214,10 @@
     <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">name</span>
+
+
+<span class="k">class</span> <span class="nc">NullContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="fm">__enter__</span> <span class="o">=</span> <span class="fm">__exit__</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="kc">None</span>
 
 
 <div class="viewcode-block" id="CommandLog"><a class="viewcode-back" href="../../cpymad/madx.html#cpymad.madx.CommandLog">[docs]</a><span class="k">class</span> <span class="nc">CommandLog</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -261,14 +269,13 @@
 <span class="sd">    :ivar table:        Mapping of all tables in memory.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libmadx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">command_log</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">error_log</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="o">**</span><span class="n">Popen_args</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libmadx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">command_log</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">Popen_args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize instance variables.</span>
 
 <span class="sd">        :param libmadx: :mod:`libmadx` compatible object</span>
 <span class="sd">        :param command_log: Log all MAD-X commands issued via cpymad.</span>
-<span class="sd">        :param error_log: logger instance ``logging.Logger``</span>
+<span class="sd">        :param stdout: file descriptor, file object or callable</span>
 <span class="sd">        :param Popen_args: Additional parameters to ``subprocess.Popen``</span>
 
 <span class="sd">        If ``libmadx`` is NOT specified, a new MAD-X interpreter will</span>
@@ -282,17 +289,23 @@
 <span class="sd">            with open(&#39;madx_output.log&#39;, &#39;w&#39;) as f:</span>
 <span class="sd">                m = Madx(stdout=f)</span>
 
-<span class="sd">            m = Madx(stdout=subprocess.PIPE)</span>
-<span class="sd">            f = m._process.stdout</span>
+<span class="sd">            m = Madx(stdout=sys.stdout)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># get logger</span>
-        <span class="k">if</span> <span class="n">error_log</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">error_log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
         <span class="c1"># open history file</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">command_log</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
             <span class="n">command_log</span> <span class="o">=</span> <span class="n">CommandLog</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">command_log</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="n">NullContext</span><span class="p">()</span>
         <span class="c1"># start libmadx subprocess</span>
         <span class="k">if</span> <span class="n">libmadx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">stdout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">sys</span> <span class="k">import</span> <span class="n">stdout</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="s1">&#39;write&#39;</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">fileno</span><span class="p">()</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">):</span>
+                    <span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">write</span>
+            <span class="n">Popen_args</span><span class="p">[</span><span class="s1">&#39;stdout&#39;</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span> <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span> <span class="k">else</span> <span class="n">stdout</span>
             <span class="c1"># stdin=None leads to an error on windows when STDIN is broken.</span>
             <span class="c1"># Therefore, we need set stdin=os.devnull by passing stdin=False:</span>
             <span class="n">Popen_args</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;stdin&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -300,12 +313,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_service</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process</span> <span class="o">=</span> \
                 <span class="n">_rpc</span><span class="o">.</span><span class="n">LibMadxClient</span><span class="o">.</span><span class="n">spawn_subprocess</span><span class="p">(</span><span class="o">**</span><span class="n">Popen_args</span><span class="p">)</span>
             <span class="n">libmadx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service</span><span class="o">.</span><span class="n">libmadx</span>
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">stdout</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="n">AsyncReader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stdout</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">libmadx</span><span class="o">.</span><span class="n">is_started</span><span class="p">():</span>
-            <span class="n">libmadx</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">:</span>
+                <span class="n">libmadx</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         <span class="c1"># init instance variables:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_libmadx</span> <span class="o">=</span> <span class="n">libmadx</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_command_log</span> <span class="o">=</span> <span class="n">command_log</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_error_log</span> <span class="o">=</span> <span class="n">error_log</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="n">CommandMap</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">globals</span> <span class="o">=</span> <span class="n">VarList</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">elements</span> <span class="o">=</span> <span class="n">GlobalElementList</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -352,7 +367,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_log</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_command_log</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_libmadx</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_libmadx</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">_rpc</span><span class="o">.</span><span class="n">RemoteProcessCrashed</span><span class="p">:</span>
             <span class="c1"># catch + reraise in order to shorten stack trace (~3-5 levels):</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;MAD-X has stopped working!&quot;</span><span class="p">)</span></div>
@@ -460,15 +476,15 @@
         <span class="n">cnt</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tab</span><span class="p">[</span><span class="s1">&#39;r11&#39;</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span>
             <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">tab</span><span class="o">.</span><span class="n">rmat</span><span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">)),</span>
-                       <span class="n">tab</span><span class="o">.</span><span class="n">kvec</span><span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)))),</span>
+                       <span class="n">tab</span><span class="o">.</span><span class="n">kvec</span><span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)))),</span>
             <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">cnt</span><span class="p">)),</span>
                        <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">cnt</span><span class="p">)))),</span>
-        <span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span></div>
+        <span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Madx.sectortable2"><a class="viewcode-back" href="../../cpymad/madx.html#cpymad.madx.Madx.sectortable2">[docs]</a>    <span class="k">def</span> <span class="nf">sectortable2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;sectortable&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Read 2nd order sectormap T_ijk, return as Nx6x6x6 array.&quot;&quot;&quot;</span>
         <span class="n">tab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">tab</span><span class="o">.</span><span class="n">tmat</span><span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="n">tab</span><span class="o">.</span><span class="n">tmat</span><span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Madx.match"><a class="viewcode-back" href="../../cpymad/madx.html#cpymad.madx.Madx.match">[docs]</a>    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
               <span class="n">constraints</span><span class="o">=</span><span class="p">[],</span>
@@ -547,7 +563,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libmadx</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">_Mapping</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_Mapping</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;String representation of a custom mapping object.&quot;&quot;&quot;</span>
@@ -567,7 +583,7 @@
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">_MutableMapping</span><span class="p">(</span><span class="n">_Mapping</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">MutableMapping</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_MutableMapping</span><span class="p">(</span><span class="n">_Mapping</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">MutableMapping</span><span class="p">):</span>
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
@@ -589,7 +605,7 @@
 <span class="k">class</span> <span class="nc">AttrDict</span><span class="p">(</span><span class="n">_Mapping</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
             <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
 
@@ -876,7 +892,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_madx</span><span class="o">.</span><span class="n">elements</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
 
 
-<span class="k">class</span> <span class="nc">ArrayAttribute</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">ArrayAttribute</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_element</span> <span class="o">=</span> <span class="n">element</span>
@@ -964,7 +980,7 @@
         <span class="k">return</span> <span class="n">index</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">ElementList</span><span class="p">(</span><span class="n">BaseElementList</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">ElementList</span><span class="p">(</span><span class="n">BaseElementList</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">madx</span><span class="p">,</span> <span class="n">sequence_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -998,16 +1014,19 @@
 <span class="k">class</span> <span class="nc">ExpandedElementList</span><span class="p">(</span><span class="n">ElementList</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">_get_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element_index</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libmadx</span><span class="o">.</span><span class="n">get_expanded_element</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sequence_name</span><span class="p">,</span> <span class="n">element_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libmadx</span><span class="o">.</span><span class="n">get_expanded_element</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sequence_name</span><span class="p">,</span> <span class="n">element_index</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_element_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libmadx</span><span class="o">.</span><span class="n">get_expanded_element_count</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sequence_name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_element_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element_name</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libmadx</span><span class="o">.</span><span class="n">get_expanded_element_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sequence_name</span><span class="p">,</span> <span class="n">element_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libmadx</span><span class="o">.</span><span class="n">get_expanded_element_index</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sequence_name</span><span class="p">,</span> <span class="n">element_name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_element_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libmadx</span><span class="o">.</span><span class="n">get_expanded_element_index_by_position</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sequence_name</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libmadx</span><span class="o">.</span><span class="n">get_expanded_element_index_by_position</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sequence_name</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;[</span><span class="si">{}</span><span class="s1">]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
@@ -1314,7 +1333,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014-2017, T. Gläßle (HIT), 2011-2013 Y.I. Levinsen, K. Fuchsberger (CERN).
+        &copy; Copyright 2014-2017, T. Gläßle (HIT),2011-2013 Y.I. Levinsen, K. Fuchsberger (CERN).
 
     </p>
   </div>
@@ -1336,7 +1355,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'1.0.4.post1',
+            VERSION:'1.0.6',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
@@ -1347,19 +1366,15 @@
       <script type="text/javascript" src="../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {
-          
-          SphinxRtdTheme.Navigation.enableSticky();
-          
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script> 
 

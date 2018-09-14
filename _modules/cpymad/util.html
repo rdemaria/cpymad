@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cpymad.util &mdash; cpymad 1.0.4.post1 documentation</title>
+  <title>cpymad.util &mdash; cpymad 1.0.6 documentation</title>
   
 
   
@@ -24,8 +24,7 @@
 
   
 
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -57,7 +56,7 @@
             
             
               <div class="version">
-                1.0.4.post1
+                1.0.6
               </div>
             
           
@@ -152,13 +151,16 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Utility functions used in other parts of the pymad package.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="k">import</span> <span class="n">contextmanager</span>
 <span class="kn">from</span> <span class="nn">numbers</span> <span class="k">import</span> <span class="n">Number</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">collections.abc</span> <span class="k">as</span> <span class="nn">abc</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">collections</span> <span class="k">as</span> <span class="nn">abc</span>
 
 <span class="kn">from</span> <span class="nn">.types</span> <span class="k">import</span> <span class="n">Range</span><span class="p">,</span> <span class="n">Constraint</span>
 
@@ -179,7 +181,7 @@
 <span class="c1"># In CPython 3.6 dicts preserve insertion order (until deleting an element)</span>
 <span class="c1"># Although, this is considered an implementation detail that should not be</span>
 <span class="c1"># relied upon, we do so anyway:</span>
-<span class="n">ordered_keys</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">keys</span> <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span> <span class="k">else</span> <span class="nb">sorted</span>
+<span class="n">ordered_keys</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">keys</span> <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span> <span class="k">else</span> <span class="nb">sorted</span>
 
 
 <span class="k">try</span><span class="p">:</span>
@@ -343,7 +345,7 @@
         <span class="k">return</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;range&#39;</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Range</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="n">_format_range</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    <span class="c1"># check for basestrings before collections.Sequence, because every</span>
+    <span class="c1"># check for basestrings before abc.Sequence, because every</span>
     <span class="c1"># basestring is also a Sequence:</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">QUOTED_PARAMS</span><span class="p">:</span>
@@ -357,7 +359,7 @@
     <span class="c1"># don&#39;t quote expressions:</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;:=&#39;</span> <span class="o">+</span> <span class="n">value</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;={&#39;</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
@@ -415,7 +417,7 @@
     <span class="k">if</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="n">PARAM_TYPE_LOGICAL_ARRAY</span><span class="p">,</span>
                  <span class="n">PARAM_TYPE_INTEGER_ARRAY</span><span class="p">,</span>
                  <span class="n">PARAM_TYPE_DOUBLE_ARRAY</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Number</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;={&#39;</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
             <span class="k">else</span><span class="p">:</span>
@@ -445,7 +447,7 @@
             <span class="k">return</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="n">_format_range</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="n">format_str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;={&#39;</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">format_str</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
 
     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Unexpected command argument type: </span><span class="si">{}</span><span class="s1">=</span><span class="si">{!r}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1">)&#39;</span>
@@ -621,7 +623,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014-2017, T. Gläßle (HIT), 2011-2013 Y.I. Levinsen, K. Fuchsberger (CERN).
+        &copy; Copyright 2014-2017, T. Gläßle (HIT),2011-2013 Y.I. Levinsen, K. Fuchsberger (CERN).
 
     </p>
   </div>
@@ -643,7 +645,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'1.0.4.post1',
+            VERSION:'1.0.6',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
@@ -654,19 +656,15 @@
       <script type="text/javascript" src="../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {
-          
-          SphinxRtdTheme.Navigation.enableSticky();
-          
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script> 
 
