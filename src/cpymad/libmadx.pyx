@@ -55,6 +55,7 @@ __all__ = [
     'num_globals',
     'get_globals',
     'get_var_type',
+    'get_variables',
 
     'get_options',
 
@@ -218,6 +219,16 @@ def get_var(name):
     return Parameter(
         name, *_expr(var.expr, value, typeid),
         dtype=typeid, inform=inform, var_type=var.type)
+
+def get_variables(names):
+    """
+    Get double value from a global variable
+    """
+    n = len(names)
+    res = np.empty(n,dtype=float)
+    for iname,name in enumerate(names):
+        res[iname] = clib.get_variable(_cstr(name))
+    return res
 
 
 def get_var_type(name):
@@ -1127,6 +1138,12 @@ cdef bytes _cstr(s):
 cdef _node_name(clib.node* node):
     return name_from_internal(_str(node.name))
 
+cdef _double_array(clib.double_array* ptr):
+    addr = <Py_intptr_t> ptr.a
+    array_type = ctypes.c_double * ptr.curr
+    array_data = array_type.from_address(addr)
+    return np.ctypeslib.as_array(array_data)
+
 
 cdef _get_node(clib.node* node, int ref_flag, int is_expanded, int line):
     """Return dictionary with node + element attributes."""
@@ -1149,6 +1166,12 @@ cdef _get_node(clib.node* node, int ref_flag, int is_expanded, int line):
     data['base_name'] = _str(node.base_name)
     data['position'] = _get_node_entry_pos(node, ref_flag, is_expanded)
     data['length'] = node.length
+    if node.p_al_err is not NULL:
+        data['align_errors']=_double_array(node.p_al_err)
+    if node.p_fd_err is not NULL:
+        data['field_errors']=_double_array(node.p_fd_err)
+    if node.p_ph_err is not NULL:
+        data['phase_errors']=_double_array(node.p_ph_err)
     return data
 
 

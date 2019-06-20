@@ -169,6 +169,9 @@ cdef extern from "madX/mad_node.h" nogil:
         expression* at_expr
         char* from_name
         element* p_elem
+        double_array* p_al_err
+        double_array* p_fd_err
+        double_array* p_ph_err
 
     struct node_list:
         int curr
@@ -273,6 +276,7 @@ cdef extern from "madX/mad_var.h" nogil:
     variable* new_variable(char* name, double val, int val_type, int type, expression*, char* string)
     void add_to_var_list(variable*, var_list*, int flag)
     void set_variable(char* name, double* value)
+    double get_variable(char* name)
     void set_stringvar(char* name, char* string)
     variable* find_variable(char* name, var_list*)
     double variable_value(variable*)
