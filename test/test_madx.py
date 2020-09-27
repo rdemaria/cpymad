@@ -851,27 +851,10 @@ class TestTransferMap(unittest.TestCase):
             beam;
         """)
 
-class TestMakethin(unittest.TestCase, _TestCaseCompat):
-
-    """
-    Test methods for the Madx class.
-
-    """
-
-    def setUp(self):
-        self.mad = Madx(command_log=CommandLog(sys.stdout, 'X:> '))
-        here = os.path.dirname(__file__)
-        there = os.path.join(here, 'test_makethin.madx')
-        with open(there) as f:
-            self.doc = f.read()
-        for line in self.doc.splitlines():
-            line = line.split('!')[0].strip()
-            if line:
-                self.mad._libmadx.input(line)
-
-    def tearDown(self):
-        self.mad.quit()
-        del self.mad
+    def test_makethin(self):
+        # regression test for segfault, see #67:
+        self.mad.chdir(os.path.dirname(__file__))
+        self.mad.call('test_makethin.madx')
 
 if __name__ == '__main__':
     unittest.main()
