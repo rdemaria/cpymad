@@ -856,5 +856,6 @@ class TestTransferMap(unittest.TestCase):
         self.mad.chdir(os.path.dirname(__file__))
         self.mad.call('test_makethin.madx')
 
+
 if __name__ == '__main__':
     unittest.main()
