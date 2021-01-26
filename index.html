@@ -1,49 +1,54 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>cpymad &mdash; cpymad 1.0.6 documentation</title>
-  
-
-  
-  
-  
+  <title>cpymad &mdash; cpymad 1.6.3 documentation</title>
   
 
   
-
-  
-  
-    
-
-  
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Getting Started" href="getting-started.html" /> 
 
   
-  <script src="_static/js/modernizr.min.js"></script>
+  
 
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -57,7 +62,7 @@
             
             
               <div class="version">
-                1.0.6
+                1.6
               </div>
             
           
@@ -74,6 +79,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -82,8 +88,9 @@
             
             
               <ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="building.html">Building from source</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation/index.html">Installation Instructions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cpymad/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="known-issues.html">Known issues</a></li>
 </ul>
@@ -91,6 +98,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -125,18 +133,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
         
       <li>cpymad</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -153,23 +163,25 @@
   <div class="section" id="cpymad">
 <h1>cpymad<a class="headerlink" href="#cpymad" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference external" href="https://github.com/hibtc/cpymad">cpymad</a> is a <a class="reference external" href="http://cython.org/">Cython</a> binding to <a class="reference external" href="http://cern.ch/mad">MAD-X</a> for giving full control and access to a
-MAD-X interpreter within the python environment.</p>
+MAD-X interpreter in python.</p>
 <div class="section" id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="building.html">Building from source</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation/unix.html">Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation/windows.html">Windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation/macos.html">MacOS (experimental)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation/troubleshooting.html">Troubleshooting</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="getting-started.html#basic-mad-x-commands">Basic MAD-X commands</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting-started.html#controlling-mad-x">Controlling MAD-X</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting-started.html#accessing-mad-x">Accessing MAD-X</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting-started.html#logging-commands">Logging commands</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting-started.html#redirecting-output">Redirecting output</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="installation/index.html">Installation Instructions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="installation/unix.html">Unix</a></li>
-<li class="toctree-l2"><a class="reference internal" href="installation/windows.html">Windows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="installation/troubleshooting.html">Troubleshooting</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cpymad/index.html">API Reference</a><ul>
@@ -186,24 +198,23 @@ MAD-X interpreter within the python environment.</p>
 <div class="section" id="links">
 <h2>Links<a class="headerlink" href="#links" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference external" href="https://github.com/hibtc/cpymad">Source code</a></li>
-<li><a class="reference external" href="https://github.com/hibtc/cpymad/issues">Issue tracker</a></li>
-<li><a class="reference external" href="https://pypi.org/project/cpymad#files">Latest release</a></li>
-<li><a class="reference external" href="https://github.com/MethodicalAcceleratorDesign/MAD-X">MAD-X source</a></li>
+<li><p><a class="reference external" href="https://github.com/hibtc/cpymad">Source code</a></p></li>
+<li><p><a class="reference external" href="https://github.com/hibtc/cpymad/issues">Issue tracker</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/cpymad#files">Latest release</a></p></li>
+<li><p><a class="reference external" href="https://github.com/MethodicalAcceleratorDesign/MAD-X">MAD-X source</a></p></li>
 </ul>
-<p>Note that cpymad is NOT maintained by CERN members and links against an
-unofficial build of MAD-X that is not supported by CERN, i.e. this binary may
-have problems that the official binary does not have and vice versa. See also:
-<a class="reference external" href="https://github.com/hibtc/cpymad#reporting-issues">Reporting issues</a>.</p>
+<p>Note that cpymad links against a custom build of MAD-X that may differ from
+the official CERN command line client. This binary may have problems that the
+official binary does not have and vice versa. See also: <a class="reference external" href="https://github.com/hibtc/cpymad#reporting-issues">Reporting issues</a>.</p>
 </div>
 <div class="section" id="indices-and-tables">
 <h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
-<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
-<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-<p>Documentation updated: Sep 14, 2018</p>
+<p>Documentation updated: Jan 26, 2021</p>
 </div>
 </div>
 
@@ -212,27 +223,28 @@ have problems that the official binary does not have and vice versa. See also:
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="getting-started.html" class="btn btn-neutral float-right" title="Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014-2017, T. Gläßle (HIT),2011-2013 Y.I. Levinsen, K. Fuchsberger (CERN).
+        &#169; Copyright 2014-2020, T. Gläßle,2014-2019, HIT Betriebs GmbH,2011-2013 Y.I. Levinsen, K. Fuchsberger (CERN).
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -241,34 +253,16 @@ have problems that the official binary does not have and vice versa. See also:
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'1.0.6',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
