@@ -172,6 +172,9 @@ cdef extern from "madX/mad_node.h" nogil:
         double_array* p_al_err
         double_array* p_fd_err
         double_array* p_ph_err
+        double chkick
+        double cvkick
+        double surv_data[7]
 
     struct node_list:
         int curr
