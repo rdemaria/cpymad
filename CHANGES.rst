@@ -40,12 +40,6 @@ Date: 05.12.2023
 - update to MAD-X 5.09.01
 - add wheels for python 3.12
 
-=======
-1.14.3
-======
-Date: 04.12.2023
-
-- add wheels for Python 3.12 (#132)
 
 1.14.2
 ======
